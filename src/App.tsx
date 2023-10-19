@@ -2,7 +2,7 @@ import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import NoPage from "./pages/NoPage";
-import PokeDex from "./pages/PokeDex";
+import PokeDex from "./pages/Pokedex";
 import PokeVersus from "./pages/PokeVersus";
 import Connect from "./pages/Connect";
 import About from "./pages/About";

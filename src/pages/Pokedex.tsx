@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import PokemonCardPokeDex from "../components/PokemonCardPokeDex";
+import PokemonCardPokeDex from "../components/PokemonCardPokedex";
 import usePokeApi from "../hooks/usePokeApi";
 import { Pokemon } from "../types/pokemon";
 
