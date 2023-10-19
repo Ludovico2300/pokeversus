@@ -1,30 +1,40 @@
 import React, { useEffect, useState } from "react";
 import PokemonCard from "../components/PokemonCard";
 import usePokeApi from "../hooks/usePokeApi";
-import { Pokemon } from "../type.def";
+import { Pokemon } from "../types/pokemon";
 
 export default function PokeVersus() {
   const { loading, fetchData } = usePokeApi();
   const [score, setScore] = useState<number>(0);
   const [highScore, setHighScore] = useState<number>(0);
-  const [firstPokemon, setFirstPokemon] = useState<Pokemon>({
-    name: "null",
-    stats: [{ base_stat: 0, stat: { name: "null" } }],
-    sprites: { front_default: "null" },
-  });
+  const [firstPokemon, setFirstPokemon] = useState<Pokemon>();
   const [firstPokemonBST, setFirstPokemonBST] = useState<number>(0);
   const [firstPokemonSelected, setFirstPokemonSelected] =
     useState<boolean>(false);
-  const [secondPokemon, setSecondPokemon] = useState<Pokemon>({
-    name: "null",
-    stats: [{ base_stat: 0, stat: { name: "null" } }],
-    sprites: { front_default: "null" },
-  });
+  const [secondPokemon, setSecondPokemon] = useState<Pokemon>();
   const [secondPokemonBST, setSecondPokemonBST] = useState<number>(0);
   const [secondPokemonSelected, setSecondPokemonSelected] =
     useState<boolean>(false);
   const [showBST, setShowBST] = useState<boolean>(false);
   const [showResult, setShowResult] = useState<string>("");
+
+  useEffect(() => {
+    const handleKeyPress = (e: any) => {
+      if (e.key === "ArrowLeft") {
+        setFirstPokemonSelected(true);
+        setSecondPokemonSelected(false);
+      } else if (e.key === "ArrowRight") {
+        setSecondPokemonSelected(true);
+        setFirstPokemonSelected(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, []);
 
   const startRound = () => {
     setShowResult("");
@@ -42,12 +52,14 @@ export default function PokeVersus() {
   };
 
   useEffect(() => {
-    setFirstPokemonBST(
-      firstPokemon.stats.reduce((acc, stat) => acc + stat.base_stat, 0)
-    );
-    setSecondPokemonBST(
-      secondPokemon.stats.reduce((acc, stat) => acc + stat.base_stat, 0)
-    );
+    if (firstPokemon)
+      setFirstPokemonBST(
+        firstPokemon.stats.reduce((acc, stat) => acc + stat.base_stat, 0)
+      );
+    if (secondPokemon)
+      setSecondPokemonBST(
+        secondPokemon.stats.reduce((acc, stat) => acc + stat.base_stat, 0)
+      );
   }, [firstPokemon, secondPokemon]);
 
   const winHandler = () => {
@@ -110,10 +122,11 @@ export default function PokeVersus() {
 
       <div className="flex flex-row h-[50%] w-full justify-around items center">
         <PokemonCard
+          isSelected={firstPokemonSelected}
           loading={loading}
           showBst={showBST}
-          pokemonSprite={firstPokemon.sprites.front_default}
-          pokemonName={firstPokemon.name}
+          pokemonSprite={firstPokemon?.sprites.front_default}
+          pokemonName={firstPokemon?.name ?? ""}
           pokemonBST={firstPokemonBST}
           onClick={() => [
             setFirstPokemonSelected(true),
@@ -122,10 +135,11 @@ export default function PokeVersus() {
         />
 
         <PokemonCard
+          isSelected={secondPokemonSelected}
           loading={loading}
           showBst={showBST}
-          pokemonSprite={secondPokemon.sprites.front_default}
-          pokemonName={secondPokemon.name}
+          pokemonSprite={secondPokemon?.sprites.front_default}
+          pokemonName={secondPokemon?.name ?? ""}
           pokemonBST={secondPokemonBST}
           onClick={() => [
             setSecondPokemonSelected(true),

@@ -9,22 +9,22 @@ export default function Home() {
         Welcome to PokeVersus!
       </div>
       <Link
-        to="/dashboard"
-        className="bg-black text-white text-xl h-[10%] w-[30%] border-white border-4 rounded-xl flex flex-col items-center justify-center font-bold"
-      >
-        DashBoard
-      </Link>
-      <Link
         to="/pokeversus"
-        className="bg-black text-white text-xl h-[10%] w-[30%] border-white border-4 rounded-xl flex flex-col items-center justify-center font-bold"
+        className="bg-white hover:bg-[#FD0001] transition-colors duration-300 ease-in-out text-xl h-[10%] w-[30%] border-black border-4 rounded-xl flex items-center justify-center font-bold"
       >
-        Play
+        PokeVersus
       </Link>
       <Link
         to="/pokedex"
-        className="bg-black text-white text-xl h-[10%] w-[30%] border-white border-4 rounded-xl flex flex-col items-center justify-center font-bold"
+        className="bg-white hover:bg-[#FD0001] transition-colors duration-300 ease-in-out text-xl h-[10%] w-[30%] border-black border-4 rounded-xl flex items-center justify-center font-bold"
       >
-        PokèDex
+        PokeDex
+      </Link>
+      <Link
+        to="/dashboard"
+        className="bg-white hover:bg-[#FD0001] transition-colors duration-300 ease-in-out text-xl h-[10%] w-[30%] border-black border-4 rounded-xl flex items-center justify-center font-bold"
+      >
+        DashBoard
       </Link>
     </>
   );

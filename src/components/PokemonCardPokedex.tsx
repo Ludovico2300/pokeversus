@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import usePokeApi from "../hooks/usePokeApi";
 import pokeballspinning from "../assets/img/pokeballspinning.gif";
-import { Pokemon } from "../type.def";
+/* import { Pokemon } from "../type.def"; */
+import { Link } from "react-router-dom";
+import { Pokemon } from "../types/pokemon";
 
-type PokemonCardPokedexProps = {
+type PokemonCardPokeDexProps = {
   pokemonName: string;
   showBst: boolean;
-  onClick?: () => void;
   loading?: boolean;
   customStyle?: string;
 };
 
-export default function PokemonCardPokedex(props: PokemonCardPokedexProps) {
-  const { pokemonName, showBst, onClick, loading, customStyle } = props;
+export default function PokemonCardPokeDex(props: PokemonCardPokeDexProps) {
+  const { pokemonName, showBst, loading, customStyle } = props;
   const [pokemonData, setPokemonData] = useState<Pokemon | null>(null);
 
   const { fetchData } = usePokeApi();
@@ -30,11 +31,11 @@ export default function PokemonCardPokedex(props: PokemonCardPokedexProps) {
   }, [pokemonName, pokemonData, loading, fetchData]);
 
   return (
-    <button
-      className={`bg-black hover:bg-[#FD0001] text-white border-4 font-bold py-2 px-4 rounded flex flex-col justify-center items-center ${
+    <Link
+      to={"/pokedex/" + pokemonData?.id}
+      className={`bg-black hover:bg-[#FD0001] transition-colors duration-300 ease-in-out text-white border-4 font-bold py-2 px-4 rounded flex flex-col justify-center items-center ${
         customStyle ? customStyle : ""
       }`}
-      onClick={() => (onClick ? onClick() : console.log("onClick"))}
     >
       {pokemonData && (
         <>
@@ -57,6 +58,6 @@ export default function PokemonCardPokedex(props: PokemonCardPokedexProps) {
           </div>
         </>
       )}
-    </button>
+    </Link>
   );
 }

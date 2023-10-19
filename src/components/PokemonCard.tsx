@@ -9,11 +9,19 @@ type PokemonCardProps = {
   onClick?: () => void;
   showBst: boolean;
   loading?: boolean;
+  isSelected?: boolean;
 };
 
 export default function PokemonCard(props: PokemonCardProps) {
-  const { pokemonSprite, pokemonName, pokemonBST, onClick, showBst, loading } =
-    props;
+  const {
+    pokemonSprite,
+    pokemonName,
+    pokemonBST,
+    onClick,
+    showBst,
+    loading,
+    isSelected,
+  } = props;
   const [sprites, setSprites] = useState();
 
   const { fetchData } = usePokeApi();
@@ -27,13 +35,13 @@ export default function PokemonCard(props: PokemonCardProps) {
 
   return (
     <button
-      className={`bg-black hover:bg-[#FD0001] text-white border-4 font-bold py-2 px-4 rounded flex flex-col justify-center items-center ${
+      className={`hover:bg-[#FD0001] transition-colors duration-300 ease-in-out text-white border-4 font-bold py-2 px-4 rounded-3xl flex flex-col justify-center items-center ${
         loading ? "animate-pulse" : ""
-      }`}
+      } ${isSelected ? "bg-[#FD0001]" : "bg-black"}`}
       onClick={() => (onClick ? onClick() : console.log("onClick"))}
     >
       <img
-        src={loading ? pokeballspinning : pokemonSprite}
+        src={loading ? pokeballspinning : pokemonSprite ?? sprites}
         height={200}
         width={200}
         className="rounded"

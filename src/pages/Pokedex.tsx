@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
-import PokemonCardPokedex from "./../components/PokemonCardPokedex";
+import PokemonCardPokeDex from "../components/PokemonCardPokeDex";
 import usePokeApi from "../hooks/usePokeApi";
-import { Pokemon } from "../type.def";
+import { Pokemon } from "../types/pokemon";
 
-export default function Pokedex() {
-  const { fetchAllPokemon, fetchData, loading } = usePokeApi();
+export default function PokeDex() {
+  const { fetchAllPokemon, loading } = usePokeApi();
   const [pokedex, setPokedex] = useState<Pokemon[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(20);
 
-  const fetchPokedexData = () => {
+  const fetchPokeDexData = () => {
     fetchAllPokemon().then((data) => {
       setPokedex(data.results);
     });
   };
 
   useEffect(() => {
-    fetchPokedexData();
+    fetchPokeDexData();
   }, []);
 
   // Calculate the range of Pokemon to display based on the current page
@@ -31,12 +31,12 @@ export default function Pokedex() {
 
   useEffect(() => {
     if (searchResults.length <= itemsPerPage) setCurrentPage(1);
-  }, [searchResults]);
+  }, [itemsPerPage, searchResults]);
 
   return (
     <>
       <div className="flex flex-col items-center justify-start absolute top-[1vh]">
-        <h1 className="text-3xl font-bold">Pokedex</h1>
+        <h1 className="text-3xl font-bold">PokeDex</h1>
         <p className="text-lg">
           Search for a Pokemon by name or type and click on it to see more
           details.
@@ -58,17 +58,19 @@ export default function Pokedex() {
             <button
               onClick={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage === 1}
-              className="border-2 border-black rounded-md p-2"
+              className=" border-2 border-black rounded-md p-2 hover:border-white hover:text-white transition-colors duration-300 ease-in-out"
             >
-              Previous Page
+              {`<--`}
             </button>
-            <div>{currentPage}</div>
+            <div className="border-2 border-black rounded-md p-2 hover:border-white hover:text-white transition-colors duration-300 ease-in-out">
+              {currentPage}
+            </div>
             <button
               onClick={() => setCurrentPage(currentPage + 1)}
               disabled={endIndex >= searchResults.length}
-              className="border-2 border-black rounded-md p-2"
+              className="border-2 border-black rounded-md p-2 hover:border-white hover:text-white transition-colors duration-300 ease-in-out"
             >
-              Next Page
+              {`-->`}
             </button>
           </div>
           <div className="flex flex-row items-center w-[30vw] justify-around my-2">
@@ -89,12 +91,11 @@ export default function Pokedex() {
             searchResults
               .slice(startIndex, endIndex)
               .map((pokemon: Pokemon) => (
-                <PokemonCardPokedex
+                <PokemonCardPokeDex
                   customStyle="m-2 border-[#FD0001] max-w-[8vw]"
                   key={pokemon.name}
                   showBst
                   pokemonName={pokemon.name}
-                  onClick={() => console.log(pokemon.name)}
                 />
               ))
           )}
