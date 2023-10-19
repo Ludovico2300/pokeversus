@@ -22,7 +22,7 @@ export default function PokemonPage() {
   }, [id]);
 
   return (
-    <div className="w-[90%] h-[90%] bg-black text-white border-white border-4 rounded-3xl transition-colors duration-300 ease-in-out rounded py-2 px-4 flex flex-col flex-wrap items-center justify-start">
+    <div className="w-[90%] h-fit bg-black text-white border-white border-4 rounded-3xl transition-colors duration-300 ease-in-out rounded py-2 px-4 flex flex-col flex-wrap items-center justify-start absolute top-1">
       {pokemon && (
         <>
           <div className="text-center">

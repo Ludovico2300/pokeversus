@@ -10,7 +10,7 @@ export default function Route() {
       <BrowserRouter>
         <Navbar />
         <div
-          className="w-full flex flex-col justify-around items-center max-h-[80vh] min-h-[80vh] "
+          className="w-full flex flex-col justify-around items-center h-[80vh]"
           style={{
             backgroundImage: `url(${process.env.PUBLIC_URL}/pokeball.webp)`,
             backgroundPosition: "center",
