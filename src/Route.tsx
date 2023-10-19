@@ -9,7 +9,23 @@ export default function Route() {
     <>
       <BrowserRouter>
         <Navbar />
-        <App />
+        <div
+          className="w-full flex flex-col justify-around items-center max-h-[80vh] min-h-[80vh] "
+          style={{
+            backgroundImage: `url(${process.env.PUBLIC_URL}/pokeball.webp)`,
+            backgroundPosition: "center",
+            backgroundSize: "cover",
+            backgroundAttachment: "fixed",
+            position: "absolute",
+            top: "10vh",
+            bottom: "10vh",
+            left: "0",
+            right: "0",
+            overflow: "auto",
+          }}
+        >
+          <App />
+        </div>
         <Footer />
       </BrowserRouter>
     </>

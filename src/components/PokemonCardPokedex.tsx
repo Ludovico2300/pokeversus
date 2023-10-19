@@ -29,34 +29,24 @@ export default function PokemonCardPokedex(props: PokemonCardPokedexProps) {
     }
   }, [pokemonName, pokemonData, loading, fetchData]);
 
-  const renderContent = () => {
-    if (loading) {
-      return (
+  return (
+    <button
+      className={`bg-black hover:bg-[#FD0001] text-white border-4 font-bold py-2 px-4 rounded flex flex-col justify-center items-center ${
+        customStyle ? customStyle : ""
+      }`}
+      onClick={() => (onClick ? onClick() : console.log("onClick"))}
+    >
+      {pokemonData && (
         <>
           <img
-            src={pokeballspinning}
-            height={200}
-            width={200}
-            className="rounded"
-            alt="Loading..."
-          />
-          <div>Loading...</div>
-        </>
-      );
-    }
-
-    if (pokemonData) {
-      return (
-        <>
-          <img
-            src={pokemonData.sprites.front_default}
-            height={200}
-            width={200}
+            src={loading ? pokeballspinning : pokemonData.sprites.front_default}
+            height={100}
+            width={100}
             className="rounded"
             alt={pokemonName}
           />
           <div>#{pokemonData.id}</div>
-          <div>{pokemonName.toUpperCase()}</div>
+          <div className="text-xs">{pokemonName.toUpperCase()}</div>
           <div>
             {showBst
               ? `BST: ${pokemonData.stats.reduce(
@@ -66,20 +56,7 @@ export default function PokemonCardPokedex(props: PokemonCardPokedexProps) {
               : "***"}
           </div>
         </>
-      );
-    }
-
-    return null;
-  };
-
-  return (
-    <button
-      className={`bg-black hover:bg-[#FD0001] text-white border-4 font-bold py-2 px-4 rounded flex flex-col justify-center items-center ${
-        customStyle ? customStyle : ""
-      }`}
-      onClick={() => (onClick ? onClick() : console.log("onClick"))}
-    >
-      {renderContent()}
+      )}
     </button>
   );
 }
