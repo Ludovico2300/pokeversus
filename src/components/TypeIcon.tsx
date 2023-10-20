@@ -23,6 +23,7 @@ const typeColors: { [key: string]: string } = {
   dark: "#705848",
   steel: "#B8B8D0",
   fairy: "#EE99AC",
+  dragon: "#7038F8",
 };
 
 export default function TypeIcon(props: TypeIconProp) {
@@ -33,7 +34,7 @@ export default function TypeIcon(props: TypeIconProp) {
 
   return (
     <div
-      className="flex items-center justify-center text-sm font-bold text-white rounded px-2 py-1 border m-4 w-16"
+      className="flex items-center justify-center text-xs font-bold text-white rounded px-2 py-1 border m-4 w-16"
       style={{
         backgroundColor: typeColor,
       }}

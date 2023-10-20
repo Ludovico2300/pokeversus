@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import usePokeApi from "../hooks/usePokeApi";
 import pokeballspinning from "../assets/img/pokeballspinning.gif";
 import { Pokemon } from "../types/pokemon";
@@ -7,15 +7,21 @@ import { PokemonFull } from "../types/pokemonSpecies";
 import TypeIcon from "../components/TypeIcon";
 import pokeballImage from "../assets/img/pokemon/pokeball.png";
 import shinySymbolPokemon from "../assets/img/pokemon/shiny_symbol_pokemon.png";
+import missingno from "../assets/img/MissingNo_Ghost.webp";
+import {
+  BsFillArrowLeftSquareFill,
+  BsFillArrowRightSquareFill,
+} from "react-icons/bs";
+import { MdFavorite } from "react-icons/md";
 
 export default function PokemonPage() {
   const { id } = useParams();
   const { fetchData, loading, fetchPokemonDetail } = usePokeApi();
   const [pokemon, setPokemon] = useState<Pokemon>();
   const [pokemonDetails, setPokemonDetails] = useState<PokemonFull>();
-
   const [entryNum, setEntryNum] = useState<number>(0);
   const [isShiny, setIsShiny] = useState<boolean>(false);
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
   useEffect(() => {
     if (id && !loading) {
@@ -37,6 +43,45 @@ export default function PokemonPage() {
     }
   }, [id]);
 
+  const prevPage = () => {
+    if (pokemon) {
+      // Calculate the previous ID
+      const previousId = pokemon.id - 1;
+      if (previousId >= 1) {
+        // Navigate to the previous page only if within the range
+        window.location.href = `/pokedex/${previousId}`;
+      }
+    }
+  };
+  const nextPage = () => {
+    if (pokemon) {
+      const nextId = pokemon.id + 1;
+      if (nextId <= 1010) {
+        // Navigate to the next page only if within the range
+        window.location.href = `/pokedex/${nextId}`;
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyPress = (e: any) => {
+      if (pokemon) {
+        if (e.key === "ArrowLeft") {
+          prevPage();
+        } else if (e.key === "ArrowRight") {
+          nextPage();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      // Cleanup: remove the event listener when the component unmounts
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [pokemon]);
+
   return (
     <div className="w-[50%] h-[99%] bg-black text-white border-white border-4 rounded-3xl transition-colors duration-300 ease-in-out rounded py-2 px-4 flex flex-col items-center justify-start absolute top-1">
       {pokemon && (
@@ -49,6 +94,12 @@ export default function PokemonPage() {
                 height={50}
                 width={50}
                 className="rounded-full mx-auto cursor-pointer"
+              />
+              <MdFavorite
+                size={50}
+                color={isFavorite ? "red" : "white"}
+                onClick={() => setIsFavorite(!isFavorite)}
+                className="cursor-pointer"
               />
               <img
                 src={shinySymbolPokemon}
@@ -63,20 +114,39 @@ export default function PokemonPage() {
               {/* SPRITE */}
               <img
                 src={
-                  loading
+                  (loading
                     ? pokeballspinning
                     : isShiny
                     ? pokemon?.sprites.front_shiny
-                    : pokemon?.sprites.front_default
+                    : pokemon?.sprites.front_default) ?? missingno
                 }
                 alt={pokemon.name}
                 height={200}
                 width={200}
-                className="rounded-full mx-auto"
+                className="rounded-3xl mx-auto"
               />
 
               {/* NAME - TYPES */}
-              <h2 className="text-lg font-bold uppercase">{pokemon.name}</h2>
+              <div className="flex justify-between items-center">
+                <BsFillArrowLeftSquareFill
+                  color="white"
+                  size={"20"}
+                  onClick={() => prevPage()}
+                />
+                <div className="flex flex-col font-bold items-center justify-around">
+                  <div className="text-lg font-bold uppercase">
+                    #{pokemon.id}
+                  </div>
+                  <div className="text-lg font-bold uppercase">
+                    {pokemon.name}
+                  </div>
+                </div>
+                <BsFillArrowRightSquareFill
+                  color="white"
+                  size={"20"}
+                  onClick={() => nextPage()}
+                />
+              </div>
               <div className="flex w-full justify-center">
                 {pokemon.types.map((type) => (
                   <TypeIcon key={type.type.name} typeName={type.type.name} />
@@ -95,10 +165,15 @@ export default function PokemonPage() {
                   <p>{stat.base_stat}</p>
                 </div>
               ))}
+              TOTAL BST
+              <p className="text-lg font-bold">
+                {pokemon.stats.reduce((acc, stat) => acc + stat.base_stat, 0)}
+              </p>
             </div>
           </div>
 
           {/* ABILITIES */}
+
           <div className="mt-4 flex flex-col items-center w-full p-4 border rounded-lg">
             <h3 className="text-lg font-semibold flex w-full justify-around">
               Abilities
@@ -116,25 +191,42 @@ export default function PokemonPage() {
           </div>
 
           {/* DESCR */}
-          <div className="mt-4 flex flex-col items-center h-[25%] w-full justify-between p-4 border rounded-lg">
-            <h3 className="text-lg font-semibold">Descriptions</h3>
-            <div className="flex justify-center item-center text-sm font-semibold w-full">
-              {pokemonDetails?.flavor_text_entries[entryNum].flavor_text}
-            </div>
-            <div className="flex w-full justify-around">
-              <button onClick={() => setEntryNum(entryNum - 1)}>PREV</button>
-              <p>
-                {pokemonDetails?.flavor_text_entries[
-                  entryNum
-                ].version.name.toUpperCase()}{" "}
-                -{" "}
-                {pokemonDetails?.flavor_text_entries[
-                  entryNum
-                ].language.name.toUpperCase()}
-              </p>
-              <button onClick={() => setEntryNum(entryNum + 1)}>NEXT</button>
-            </div>
-          </div>
+          {pokemonDetails &&
+            pokemonDetails.flavor_text_entries &&
+            pokemonDetails.flavor_text_entries[entryNum] && (
+              <div className="mt-4 flex flex-col items-center h-[25%] w-full justify-between p-4 border rounded-lg">
+                <h3 className="text-lg font-semibold">Descriptions</h3>
+                <div className="flex justify-center item-center text-sm font-semibold w-full">
+                  {pokemonDetails.flavor_text_entries[entryNum].flavor_text ||
+                    "no description..."}
+                </div>
+                <div className="flex w-full justify-around">
+                  <button
+                    onClick={() => setEntryNum(entryNum - 1)}
+                    disabled={entryNum === 0}
+                  >
+                    PREV
+                  </button>
+                  <p>
+                    {pokemonDetails.flavor_text_entries[
+                      entryNum
+                    ].version.name.toUpperCase()}{" "}
+                    -{" "}
+                    {pokemonDetails.flavor_text_entries[
+                      entryNum
+                    ].language.name.toUpperCase()}
+                  </p>
+                  <button
+                    onClick={() => setEntryNum(entryNum + 1)}
+                    disabled={
+                      entryNum === pokemonDetails.flavor_text_entries.length - 1
+                    }
+                  >
+                    NEXT
+                  </button>
+                </div>
+              </div>
+            )}
         </div>
       )}
     </div>
