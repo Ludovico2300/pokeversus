@@ -1,6 +1,9 @@
-- [ADD] PokemonCard
 - [ADD] Difficulty (easy: no timer - med: 5sec - hard: 3sec)
-- [ADD] Type Component
 - [ADD] Move Component
-- [ADD] Next/Prev PokemonPage (also with arrow key)
 - [ADD] DashBoard (firebase, hs, pref pokemon)
+
+done:
+
+- [ADD] Next/Prev PokemonPage (also with arrow key)
+- [ADD] Type Component
+- [ADD] PokemonCard
