@@ -33,11 +33,9 @@ export default function TypeIcon(props: TypeIconProp) {
 
   return (
     <div
+      className="flex items-center justify-center text-sm font-bold text-white rounded px-2 py-1 border m-4 w-16"
       style={{
         backgroundColor: typeColor,
-        color: "white",
-        padding: "4px 8px",
-        borderRadius: "4px",
       }}
     >
       {typeName.toUpperCase()}
