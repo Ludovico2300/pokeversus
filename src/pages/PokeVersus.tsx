@@ -122,6 +122,7 @@ export default function PokeVersus() {
 
       <div className="flex flex-row h-[50%] w-full justify-around items center">
         <PokemonCard
+          isMirror
           isSelected={firstPokemonSelected}
           loading={loading}
           showBst={showBST}

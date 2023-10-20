@@ -25,7 +25,7 @@ interface HeldItem {
   version_details: VersionDetail[];
 }
 
-interface Move {
+export interface Move {
   move: {
     name: string;
     url: string;

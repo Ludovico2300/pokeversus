@@ -3,6 +3,7 @@ import usePokeApi from "../hooks/usePokeApi";
 import { useEffect, useState } from "react";
 
 type PokemonCardProps = {
+  isMirror?: boolean;
   pokemonSprite?: string;
   pokemonName: string;
   pokemonBST?: number;
@@ -21,6 +22,7 @@ export default function PokemonCard(props: PokemonCardProps) {
     showBst,
     loading,
     isSelected,
+    isMirror,
   } = props;
   const [sprites, setSprites] = useState();
 
@@ -46,6 +48,7 @@ export default function PokemonCard(props: PokemonCardProps) {
         width={200}
         className="rounded"
         alt={pokemonSprite}
+        style={{ transform: isMirror ? "scaleX(-1)" : "" }}
       />
       <div>{!loading ? pokemonName.toUpperCase() : "loading..."}</div>
       <div>{showBst ? pokemonBST : "***"}</div>
