@@ -2,11 +2,15 @@ import React, { useEffect, useState } from "react";
 import PokemonCard from "../components/PokemonCard";
 import usePokeApi from "../hooks/usePokeApi";
 import { Pokemon } from "../types/pokemon";
+import useDatabaseFirebase from "../hooks/useDatabaseFirebase";
+import useAuthFirebase from "../hooks/useAuthFirebase";
 
 export default function PokeVersus() {
+  const { currentUser } = useAuthFirebase();
+  const { hs, updateHs, user } = useDatabaseFirebase();
   const { loading, fetchData } = usePokeApi();
   const [score, setScore] = useState<number>(0);
-  const [highScore, setHighScore] = useState<number>(0);
+  const [highScore, setHighScore] = useState<number>(hs);
   const [firstPokemon, setFirstPokemon] = useState<Pokemon>();
   const [firstPokemonBST, setFirstPokemonBST] = useState<number>(0);
   const [firstPokemonSelected, setFirstPokemonSelected] =
@@ -17,24 +21,6 @@ export default function PokeVersus() {
     useState<boolean>(false);
   const [showBST, setShowBST] = useState<boolean>(false);
   const [showResult, setShowResult] = useState<string>("");
-
-  useEffect(() => {
-    const handleKeyPress = (e: any) => {
-      if (e.key === "ArrowLeft") {
-        setFirstPokemonSelected(true);
-        setSecondPokemonSelected(false);
-      } else if (e.key === "ArrowRight") {
-        setSecondPokemonSelected(true);
-        setFirstPokemonSelected(false);
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyPress);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyPress);
-    };
-  }, []);
 
   const startRound = () => {
     setShowResult("");
@@ -73,6 +59,13 @@ export default function PokeVersus() {
   };
 
   const loseHandler = () => {
+    if (score >= hs) {
+      setHighScore(score);
+      if (user) {
+        updateHs(score);
+      }
+    }
+
     setScore(0);
     setShowBST(true);
     setShowResult("lost");
@@ -90,12 +83,6 @@ export default function PokeVersus() {
     }
   };
 
-  useEffect(() => {
-    if (score >= highScore) {
-      setHighScore(score);
-    }
-  }, [score]);
-
   const roundHandler = () => {
     if (firstPokemonSelected) {
       handleResult(firstPokemonBST >= secondPokemonBST);
@@ -107,6 +94,22 @@ export default function PokeVersus() {
 
   useEffect(() => {
     startRound();
+    //add listener to use keyboard arrows to play
+    const handleKeyPress = (e: any) => {
+      if (e.key === "ArrowLeft") {
+        setFirstPokemonSelected(true);
+        setSecondPokemonSelected(false);
+      } else if (e.key === "ArrowRight") {
+        setSecondPokemonSelected(true);
+        setFirstPokemonSelected(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
   }, []);
 
   useEffect(() => {
@@ -117,7 +120,7 @@ export default function PokeVersus() {
     <>
       <div className="bg-black text-white text-xl h-[10%] w-[30%] border-white border-4 rounded-xl flex flex-col items-center justify-center font-bold">
         <div>Your Score is: {score}</div>
-        <div> Your Highscore is: {highScore}</div>
+        <div> Your Highscore is: {currentUser ? hs : highScore}</div>
       </div>
 
       <div className="flex flex-row h-[50%] w-full justify-around items center">

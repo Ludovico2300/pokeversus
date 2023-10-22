@@ -2,23 +2,42 @@ import React, { useEffect, useState } from "react";
 import PokemonCardPokeDex from "../components/PokemonCardPokedex";
 import usePokeApi from "../hooks/usePokeApi";
 import { Pokemon } from "../types/pokemon";
+import useDatabaseFirebase from "../hooks/useDatabaseFirebase";
+import { MdFavorite } from "react-icons/md";
 
 export default function PokeDex() {
-  const { fetchAllPokemon, loading } = usePokeApi();
+  const { user, favPokemon } = useDatabaseFirebase();
+  const { fetchAllPokemon, loading, fetchData } = usePokeApi();
   const [pokedex, setPokedex] = useState<Pokemon[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(20);
+  const [showFav, setShowFav] = useState<boolean>(false);
+  const [favPokemons, setFavPokemons] = useState<Pokemon[]>([]);
 
   const fetchPokeDexData = () => {
     fetchAllPokemon().then((data) => {
       setPokedex(data.results);
     });
+
+    if (favPokemon) {
+      const promises = favPokemon.map((pokemonId) => {
+        return fetchData(pokemonId).then((data) => data);
+      });
+
+      Promise.all(promises)
+        .then((favoritePokemonData) => {
+          setFavPokemons(favoritePokemonData);
+        })
+        .catch((error) => {
+          console.error("Error fetching favorite Pokemon:", error);
+        });
+    }
   };
 
   useEffect(() => {
     fetchPokeDexData();
-  }, []);
+  }, [showFav]);
 
   // Calculate the range of Pokemon to display based on the current page
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -32,6 +51,8 @@ export default function PokeDex() {
   useEffect(() => {
     if (searchResults.length <= itemsPerPage) setCurrentPage(1);
   }, [itemsPerPage, searchResults]);
+
+  const pokemonToDisplay = showFav ? favPokemons : searchResults;
 
   return (
     <>
@@ -54,6 +75,14 @@ export default function PokeDex() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          {user && (
+            <MdFavorite
+              size={50}
+              color={showFav ? "black" : "white"}
+              onClick={() => setShowFav(!showFav)}
+              className="cursor-pointer"
+            />
+          )}
           <div className="flex flex-row items-center w-[30vw] justify-around my-2">
             <button
               onClick={() => setCurrentPage(currentPage - 1)}
@@ -88,7 +117,7 @@ export default function PokeDex() {
           {loading ? (
             <p>Loading...</p>
           ) : (
-            searchResults
+            pokemonToDisplay
               .slice(startIndex, endIndex)
               .map((pokemon: Pokemon) => (
                 <PokemonCardPokeDex

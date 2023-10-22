@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import usePokeApi from "../hooks/usePokeApi";
 import pokeballspinning from "../assets/img/pokeballspinning.gif";
 import { Pokemon } from "../types/pokemon";
@@ -13,15 +13,29 @@ import {
   BsFillArrowRightSquareFill,
 } from "react-icons/bs";
 import { MdFavorite } from "react-icons/md";
+import useAuthFirebase from "../hooks/useAuthFirebase";
+import useDatabaseFirebase from "../hooks/useDatabaseFirebase";
 
 export default function PokemonPage() {
+  const { currentUser } = useAuthFirebase();
+  const { favPokemon, toggleFavorite, user } = useDatabaseFirebase();
   const { id } = useParams();
   const { fetchData, loading, fetchPokemonDetail } = usePokeApi();
   const [pokemon, setPokemon] = useState<Pokemon>();
   const [pokemonDetails, setPokemonDetails] = useState<PokemonFull>();
   const [entryNum, setEntryNum] = useState<number>(0);
   const [isShiny, setIsShiny] = useState<boolean>(false);
-  const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  //@ts-ignore
+  const isInFav = favPokemon ? favPokemon.includes(pokemon?.id) : false;
+  console.log("isInFav", isInFav);
+  const [isFavorite, setIsFavorite] = useState<boolean>();
+
+  useEffect(() => {
+    if (favPokemon && currentUser) {
+      setIsFavorite(isInFav);
+      console.log("isFavorite", isFavorite);
+    }
+  }, [currentUser, favPokemon, id, isFavorite, isInFav, toggleFavorite]);
 
   useEffect(() => {
     if (id && !loading) {
@@ -63,7 +77,7 @@ export default function PokemonPage() {
     }
   };
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const handleKeyPress = (e: any) => {
       if (pokemon) {
         if (e.key === "ArrowLeft") {
@@ -73,14 +87,12 @@ export default function PokemonPage() {
         }
       }
     };
-
     window.addEventListener("keydown", handleKeyPress);
-
     return () => {
       // Cleanup: remove the event listener when the component unmounts
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [pokemon]);
+  }, [pokemon]); */
 
   return (
     <div className="w-[50%] h-[99%] bg-black text-white border-white border-4 rounded-3xl transition-colors duration-300 ease-in-out rounded py-2 px-4 flex flex-col items-center justify-start absolute top-1">
@@ -95,12 +107,14 @@ export default function PokemonPage() {
                 width={50}
                 className="rounded-full mx-auto cursor-pointer"
               />
-              <MdFavorite
-                size={50}
-                color={isFavorite ? "red" : "white"}
-                onClick={() => setIsFavorite(!isFavorite)}
-                className="cursor-pointer"
-              />
+              {user && (
+                <MdFavorite
+                  size={50}
+                  color={isFavorite ? "red" : "white"}
+                  onClick={() => toggleFavorite(pokemon.id)}
+                  className="cursor-pointer"
+                />
+              )}
               <img
                 src={shinySymbolPokemon}
                 alt={"shinySymbolPokemon"}
@@ -127,12 +141,12 @@ export default function PokemonPage() {
               />
 
               {/* NAME - TYPES */}
-              <div className="flex justify-between items-center">
-                <BsFillArrowLeftSquareFill
+              <div className="flex justify-center items-center">
+                {/*                 <BsFillArrowLeftSquareFill
                   color="white"
                   size={"20"}
                   onClick={() => prevPage()}
-                />
+                /> */}
                 <div className="flex flex-col font-bold items-center justify-around">
                   <div className="text-lg font-bold uppercase">
                     #{pokemon.id}
@@ -141,11 +155,11 @@ export default function PokemonPage() {
                     {pokemon.name}
                   </div>
                 </div>
-                <BsFillArrowRightSquareFill
+                {/*                 <BsFillArrowRightSquareFill
                   color="white"
                   size={"20"}
                   onClick={() => nextPage()}
-                />
+                /> */}
               </div>
               <div className="flex w-full justify-center">
                 {pokemon.types.map((type) => (

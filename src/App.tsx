@@ -7,6 +7,7 @@ import PokeVersus from "./pages/PokeVersus";
 import Connect from "./pages/Connect";
 import About from "./pages/About";
 import PokemonPage from "./pages/PokemonPage";
+import Dashboard from "./pages/Dashboard";
 
 /**
  * Renders the App component.
@@ -16,6 +17,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/pokedex" element={<PokeDex />} />
       <Route path="/pokedex/:id" element={<PokemonPage />} />
       <Route path="/pokeversus" element={<PokeVersus />} />
